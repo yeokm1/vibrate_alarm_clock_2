@@ -423,7 +423,7 @@ String generateTimeString(int hour, int minute, boolean blinkOn){
   
   String secondString;
   
- if(blinkOn){
+ if(blinkOn || currentState == SETTING_TIME){
     secondString = ":";
   } 
   else {
