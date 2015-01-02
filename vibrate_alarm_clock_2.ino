@@ -56,6 +56,9 @@ unsigned long timeLastPressedMiddleButton;
 unsigned long timeLastPressedRightButton;
 
 
+boolean vibrate1 = false;
+boolean vibrate2 = false;
+
 boolean previousBlinkState;
 unsigned long previousBlinkTime;
 
@@ -138,7 +141,7 @@ void loop (){
     int voltageADCReading = getVoltageADCReading();
 
     long vccVoltage = getVcc();
-    Serial.println(vccVoltage);
+    //Serial.println(vccVoltage);
     int batteryMilliVolt = ((long) voltageADCReading * vccVoltage) / ADC_PRECISION;
 
     writeTimeToDisplayBuffer(now, blinkOn, secondsBlink);
@@ -159,6 +162,15 @@ void loop (){
 int getVoltageADCReading(){
   return analogRead(VOLTAGE_MEASURE_PIN); 
 }
+
+
+void turnOffLCD(){
+  if(!showLCD){
+    uView.clear(PAGE);
+    uView.display();
+  }
+}
+
 void processLeftButtonPressed(){
   unsigned long currentMillis = millis();
 
@@ -169,6 +181,84 @@ void processLeftButtonPressed(){
   timeLastPressedLeftButton = currentMillis;
 
   Serial.println("Left Button Pressed");
+  
+  switch(currentState)
+  {
+  case ALARM: stopAlarm();
+  break;
+  case NORMAL :
+  {
+    showLCD = !showLCD;
+    turnOffLCD();
+    
+  }
+  break;
+  case SETTING_ALARM:
+  {
+   if(settingAlarmProcess == A_HOUR){
+       alarmHour = getNextHourFromCurrentHour(alarmHour, false);
+    } else if(settingAlarmProcess == A_MINUTE){
+       alarmMinute = getNextMinSecFromCurrentMinSec(alarmMinute, false);
+    } else if(settingAlarmProcess == A_TYPE){
+              
+       if(!vibrate1 && !vibrate2){
+          vibrate1 = true;
+          vibrate2 = true;
+       } else if(!vibrate1 && vibrate2){
+          vibrate1 = false;
+          vibrate2 = false;
+       } else if(vibrate1 && !vibrate2){
+         vibrate1 = false;
+         vibrate2 = true;  
+       } else {
+          vibrate1 = true;
+          vibrate2 = false;  
+      }
+   }
+  
+  }
+  break;
+  case SETTING_TIME:
+  {
+    DateTime now = RTC.now();
+    DateTime newTime;
+    switch(settingTimeProcess){
+      case T_HOUR:
+        newTime = DateTime(now.year(), now.month(), now.day(), getNextHourFromCurrentHour(now.hour(), false), now.minute(), now.second());
+        break;
+      case T_MINUTE:
+        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), false), now.second());
+        break;
+      case T_SECOND:
+        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), now.minute(), getNextMinSecFromCurrentMinSec(now.second(), false));
+        break;
+      case T_DAY:
+        newTime = DateTime(now.year(), now.month(), now.day() - 1, now.hour(), now.minute(), now.second());
+        break;
+      case T_MONTH:
+      {
+        int month = now.month();
+        if(month == 1){
+          month = 12;
+        } else {
+          month--;
+        }
+      
+        newTime = DateTime(now.year(), month, now.day(), now.hour(), now.minute(), now.second());
+      }
+        break;
+      case T_YEAR:
+        newTime = DateTime(now.year() - 1, now.month(), now.day(), now.hour(), now.minute(), now.second());
+        break;
+      default: break;
+     
+    }
+       
+    RTC.adjust(newTime);
+  }
+  break;
+  default: break;
+  }
 
 
 }
@@ -184,6 +274,54 @@ void processMiddleButtonPressed(){
   timeLastPressedMiddleButton = currentMillis;
 
   Serial.println("Middle Button Pressed");
+  
+    switch(currentState)
+  {
+    case ALARM: stopAlarm();
+    break;
+    case NORMAL :
+    {
+      if(showLCD){
+        currentState = SETTING_ALARM;
+        settingAlarmProcess = A_HOUR;
+      } else {
+        showLCD = true;
+      }
+
+    }
+    break;
+    case SETTING_ALARM:
+    {
+      if(settingAlarmProcess == A_HOUR){
+         settingAlarmProcess = A_MINUTE;
+      } else if(settingAlarmProcess == A_MINUTE){
+         settingAlarmProcess = A_TYPE;
+      } else {
+        currentState = NORMAL;
+      }
+
+    }
+    break;
+    case SETTING_TIME:
+    {
+      if(settingTimeProcess == T_HOUR){
+         settingTimeProcess = T_MINUTE;
+      } else if(settingTimeProcess == T_MINUTE){
+         settingTimeProcess = T_SECOND;
+      } else if(settingTimeProcess == T_SECOND){
+         settingTimeProcess = T_DAY;      
+      } else if(settingTimeProcess == T_DAY){
+        settingTimeProcess = T_MONTH; 
+      } else if(settingTimeProcess == T_MONTH){
+         settingTimeProcess = T_YEAR;           
+      } else {
+        currentState = NORMAL;
+      }
+      
+    }
+    break;
+    default: break;
+    }
 
 
 }
@@ -200,6 +338,88 @@ void processRightButtonPressed(){
 
   Serial.println("Right Button Pressed");
 
+
+  switch(currentState)
+  {
+    case ALARM: stopAlarm();
+    break;
+    case NORMAL :
+   { 
+      if(showLCD){
+        currentState = SETTING_TIME;
+        settingTimeProcess = T_HOUR;
+      } else {
+        showLCD = true;
+      }
+      
+   }
+    break;
+    case SETTING_ALARM:
+    {
+        if(settingAlarmProcess == A_HOUR){
+          alarmHour = getNextHourFromCurrentHour(alarmHour, true);
+        } else if(settingAlarmProcess == A_MINUTE){
+          alarmMinute = getNextMinSecFromCurrentMinSec(alarmMinute, true);
+        } else if(settingAlarmProcess == A_TYPE){
+              
+          if(!vibrate1 && !vibrate2){
+                vibrate1 = false;
+                vibrate2 = true;
+              } else if(!vibrate1 && vibrate2){
+                vibrate1 = true;
+                vibrate2 = false;
+              } else if(vibrate1 && !vibrate2){
+                vibrate1 = true;
+                vibrate2 = true;  
+              } else {
+                vibrate1 = false;
+                vibrate2 = false;  
+              }
+        }
+    }
+    break;
+    case SETTING_TIME:
+      {
+    DateTime now = RTC.now();
+    DateTime newTime;
+    switch(settingTimeProcess){
+      case T_HOUR:
+        newTime = DateTime(now.year(), now.month(), now.day(), getNextHourFromCurrentHour(now.hour(), true), now.minute(), now.second());
+        break;
+      case T_MINUTE:
+        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), true), now.second());
+        break;
+      case T_SECOND:
+        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), now.minute(), getNextMinSecFromCurrentMinSec(now.second(), true));
+        break;
+      case T_DAY:
+        newTime = DateTime(now.year(), now.month(), now.day() + 1, now.hour(), now.minute(), now.second());
+        break;
+      case T_MONTH:
+      {
+        int month = now.month();
+        if(month == 12){
+          month = 1;
+        } else {
+          month++;
+        }
+        newTime = DateTime(now.year(), month, now.day(), now.hour(), now.minute(), now.second());
+      }
+        break;
+      case T_YEAR:
+        newTime = DateTime(now.year() + 1, now.month(), now.day(), now.hour(), now.minute(), now.second());
+        break;
+      default: break;
+     
+    }
+       
+    RTC.adjust(newTime);
+  }
+    
+    
+    break;
+    default: break;
+  }
 
 }
 
@@ -225,20 +445,44 @@ void stopAlarm(){
 void writeTimeToDisplayBuffer(DateTime now, boolean blinkOn, boolean secondsBlinkOn){
   uView.setCursor(0,0);
   uView.setFontType(7);
+  
+  String timeString = generateTimeString(now.hour(), now.minute(), secondsBlinkOn);
+  uView.println(timeString);
+}
 
-  uView.print(now.hour());
-  if(secondsBlinkOn){
-    uView.print(":");
+String generateTimeString(int hour, int minute, boolean blinkOn){
+  char buff[3];
+  
+  String hourString;
+  
+  if(currentState == SETTING_TIME && settingTimeProcess == T_HOUR && !blinkOn){
+    hourString = "  ";
+  } else {
+    sprintf(buff, "%02d", hour);
+    hourString = buff;
+  }
+
+  String minuteString;
+  if(currentState == SETTING_TIME && settingTimeProcess == T_MINUTE && !blinkOn){
+    minuteString = "  ";
+  } else {
+    sprintf(buff, "%02d", minute);
+    minuteString = buff;
+  }
+  
+  String secondString;
+  
+ if(blinkOn){
+    secondString = ":";
   } 
   else {
-    uView.print(" ");
+    secondString = " ";
   }
 
 
-  uView.println(now.minute());
+  String result = hourString + secondString + minuteString;
 
-
-
+  return result;
 }
 
 void writeAlarmToDisplayBuffer(boolean blinkOn){
@@ -325,6 +569,35 @@ long getVcc() {
 
 
   return result;
+}
+
+
+int getNextHourFromCurrentHour(int current, boolean increment){
+  int change;
+  if(increment){
+    change = 1;
+  } else {
+    change = -1;
+  }
+  
+  int newValue = current + change;
+  
+  //To produce positive modulo result
+  return (newValue % 24 + 24) % 24;
+}
+
+int getNextMinSecFromCurrentMinSec(int current, boolean increment){
+    int change;
+  if(increment){
+    change = 1;
+  } else {
+    change = -1;
+  }
+  
+  int newValue = current + change;
+  
+  //To produce positive modulo result
+  return (newValue % 60 + 60) % 60;
 }
 
 
