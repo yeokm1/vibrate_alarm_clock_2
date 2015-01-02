@@ -100,6 +100,10 @@ void setup() {
   pinMode(VOLTAGE_MEASURE_PIN, INPUT);
 
 
+  pinMode(MOTOR_PIN1, OUTPUT); 
+  pinMode(MOTOR_PIN2, OUTPUT);
+  pinMode(MOTOR_SLEEP_PIN, OUTPUT);
+
   timeLastPressedLeftButton = 0;
   timeLastPressedMiddleButton = 0;
   timeLastPressedRightButton = 0;
