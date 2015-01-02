@@ -480,7 +480,28 @@ void writeVoltageToDisplayBuffer(int batteryMilliVolt){
 void writeButtonStateToDisplayBuffer(boolean blinkOn){
   uView.setFontType(0);
   uView.setCursor(0,41);
-  uView.print("Led Alm Ti");
+  
+  String buttonFunction;
+  switch(currentState)
+  {
+    case ALARM: 
+    {
+      if(!blinkOn){
+        buttonFunction = "X   X   X";
+      }
+    
+    }
+    break;
+    case NORMAL : buttonFunction =  "Led Alm Ti";
+    break;
+    case SETTING_ALARM: 
+    //Fallthrough
+    case SETTING_TIME: buttonFunction = "-  Next  +";
+    break;
+    default: break;
+  }
+  
+  uView.print(buttonFunction);
 }
 
 
