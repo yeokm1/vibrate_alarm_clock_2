@@ -30,7 +30,7 @@ CLOCK_STATE ;
 CLOCK_STATE currentState = NORMAL;
 
 typedef enum {
-  T_HOUR, T_MINUTE, T_SECOND, T_DAY, T_MONTH, T_YEAR} 
+  T_HOUR, T_MINUTE} 
 SETTING_TIME_STATE ;
 SETTING_TIME_STATE settingTimeProcess;
 
@@ -229,27 +229,6 @@ void processLeftButtonPressed(){
       case T_MINUTE:
         newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), false), now.second());
         break;
-      case T_SECOND:
-        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), now.minute(), getNextMinSecFromCurrentMinSec(now.second(), false));
-        break;
-      case T_DAY:
-        newTime = DateTime(now.year(), now.month(), now.day() - 1, now.hour(), now.minute(), now.second());
-        break;
-      case T_MONTH:
-      {
-        int month = now.month();
-        if(month == 1){
-          month = 12;
-        } else {
-          month--;
-        }
-      
-        newTime = DateTime(now.year(), month, now.day(), now.hour(), now.minute(), now.second());
-      }
-        break;
-      case T_YEAR:
-        newTime = DateTime(now.year() - 1, now.month(), now.day(), now.hour(), now.minute(), now.second());
-        break;
       default: break;
      
     }
@@ -306,14 +285,6 @@ void processMiddleButtonPressed(){
     {
       if(settingTimeProcess == T_HOUR){
          settingTimeProcess = T_MINUTE;
-      } else if(settingTimeProcess == T_MINUTE){
-         settingTimeProcess = T_SECOND;
-      } else if(settingTimeProcess == T_SECOND){
-         settingTimeProcess = T_DAY;      
-      } else if(settingTimeProcess == T_DAY){
-        settingTimeProcess = T_MONTH; 
-      } else if(settingTimeProcess == T_MONTH){
-         settingTimeProcess = T_YEAR;           
       } else {
         currentState = NORMAL;
       }
@@ -388,26 +359,6 @@ void processRightButtonPressed(){
         break;
       case T_MINUTE:
         newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), true), now.second());
-        break;
-      case T_SECOND:
-        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), now.minute(), getNextMinSecFromCurrentMinSec(now.second(), true));
-        break;
-      case T_DAY:
-        newTime = DateTime(now.year(), now.month(), now.day() + 1, now.hour(), now.minute(), now.second());
-        break;
-      case T_MONTH:
-      {
-        int month = now.month();
-        if(month == 12){
-          month = 1;
-        } else {
-          month++;
-        }
-        newTime = DateTime(now.year(), month, now.day(), now.hour(), now.minute(), now.second());
-      }
-        break;
-      case T_YEAR:
-        newTime = DateTime(now.year() + 1, now.month(), now.day(), now.hour(), now.minute(), now.second());
         break;
       default: break;
      
