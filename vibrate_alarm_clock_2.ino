@@ -11,6 +11,10 @@
 
 #define VOLTAGE_MEASURE_PIN A0
 
+#define MOTOR_PIN1 5
+#define MOTOR_PIN2 3
+#define MOTOR_SLEEP_PIN 6
+
 #define ADC_PRECISION 1024
 
 #define MIN_BATTERY_MILLIVOLT 3200 //You may need to calibrate this
@@ -23,6 +27,9 @@
 
 #define BLINK_INTERVAL_SETTINGS 100
 #define BLINK_INTERVAL_SECONDS 500
+
+#define MIN_TIME_BETWEEN_ALARM_STARTS 60000 //60 seconds
+#define MIN_TIME_BETWEEN_MOTOR_STATES 500
 
 typedef enum {
   NORMAL, ALARM, SETTING_TIME, SETTING_ALARM} 
@@ -64,6 +71,8 @@ boolean previousSecondsBlinkState;
 unsigned long previousSecondsBlinkTime;
 
 boolean showLCD = true;
+unsigned long lastVibration;
+boolean lastMotorState = false;
 
 void setup() {
 
@@ -162,7 +171,7 @@ int getVoltageADCReading(){
 }
 
 
-void turnOffLCD(){
+void turnOffLCDIfCommandIsOff(){
   if(!showLCD){
     uView.clear(PAGE);
     uView.display();
@@ -188,7 +197,7 @@ void processLeftButtonPressed(){
   case NORMAL :
     {
       showLCD = !showLCD;
-      turnOffLCD();
+      turnOffLCDIfCommandIsOff();
 
     }
     break;
@@ -366,13 +375,41 @@ void processRightButtonPressed(){
 
 
 void checkAndSoundAlarm(int hour, int minute){
-
+  unsigned long currentMillis = millis();
+  
+  if(hour == alarmHour && minute == alarmMinute && currentState == NORMAL
+  && ((currentMillis - alarmLastStarted) > MIN_TIME_BETWEEN_ALARM_STARTS)
+  && (vibrate)){
+    currentState = ALARM;
+    alarmLastStarted = currentMillis;
+    motorDriverState(true);
+     
+  }
 
 }
 
 
 void soundAlarmAtThisPointIfNeeded(){
+  if(currentState == ALARM){
+    
+    unsigned long currentMillis = millis();
 
+    if(alarmVibrate && ((currentMillis - lastVibration) > MIN_TIME_BETWEEN_MOTOR_STATES)){
+      lastVibration = currentMillis;
+      
+      if(lastMotorState){
+        lastMotorState = false;
+        changeMotorState(false, false);
+      } else {
+        lastMotorState = true;
+        changeMotorState(true, true);
+      }
+
+
+    }
+    
+
+  }
 
 
 }
@@ -380,6 +417,37 @@ void soundAlarmAtThisPointIfNeeded(){
 
 
 void stopAlarm(){
+  currentState = NORMAL;
+  motorDriverState(false); 
+  turnOffLCDIfCommandIsOff();
+}
+
+void motorDriverState(boolean state){
+  if(state){
+    digitalWrite(MOTOR_SLEEP_PIN, HIGH);
+  } else {
+    digitalWrite(MOTOR_SLEEP_PIN, LOW);
+  }
+}
+
+void changeMotorState(boolean active, bool direction){
+
+  if(!active){
+     digitalWrite(MOTOR_PIN1, LOW);
+     digitalWrite(MOTOR_PIN2, LOW);
+     return; 
+  }
+  
+   if(direction){
+     digitalWrite(MOTOR_PIN1, HIGH);
+     digitalWrite(MOTOR_PIN2, LOW);     
+   } else {
+     digitalWrite(MOTOR_PIN1, LOW);
+     digitalWrite(MOTOR_PIN2, HIGH); 
+   }
+    
+
+
 }
 
 void writeTimeToDisplayBuffer(DateTime now, boolean blinkOn, boolean secondsBlinkOn){
