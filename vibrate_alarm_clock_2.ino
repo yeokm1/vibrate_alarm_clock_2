@@ -1,8 +1,7 @@
 #include <Wire.h>
-#include <SPI.h>
 #include <MicroView.h>
-#include <RTClib.h>
-#include <RTC_DS1307.h>
+#include <DS3232RTC.h>    //http://github.com/JChristensen/DS3232RTC
+#include <Time.h>         //http://www.arduino.cc/playground/Code/Time  
 
 #include "LowPower.h"
 
@@ -56,10 +55,6 @@ int alarmMinute = 00;
 
 unsigned long alarmLastStarted;
 
-
-RTC_DS1307 RTC;
-
-
 unsigned long timeLastPressedLeftButton;
 unsigned long timeLastPressedMiddleButton;
 unsigned long timeLastPressedRightButton;
@@ -92,18 +87,9 @@ long milliVoltTotal = 0;
 void setup() {
 
   Wire.begin();
-  RTC.begin();
   Serial.begin(9600);
 
-
-  // This section grabs the current datetime and compares it to
-  // the compilation time.  If necessary, the RTC is updated.
-  DateTime now = RTC.now();
-  DateTime compiled = DateTime(__DATE__, __TIME__);
-  if (now.unixtime() < compiled.unixtime()) {
-    RTC.adjust(DateTime(__DATE__, __TIME__));
-  } 
-
+  setSyncProvider(RTC.get);
 
   uView.begin();      // begin of MicroView
   uView.clear(ALL);   // erase hardware memory inside the OLED controller
@@ -156,10 +142,8 @@ void loop (){
   }
 
 
-  DateTime now = RTC.now();
 
-
-  checkAndSoundAlarm(now.hour(), now.minute());
+  checkAndSoundAlarm(hour(), minute());
   soundAlarmAtThisPointIfNeeded();
 
   //Disable alarm if it has gone longer than maximum
@@ -182,7 +166,7 @@ void loop (){
 
 
 
-    writeTimeToDisplayBuffer(now, blinkOn, secondsBlink);
+    writeTimeToDisplayBuffer(blinkOn, secondsBlink);
     writeAlarmToDisplayBuffer(blinkOn);
     writeVoltageToDisplayBuffer(batteryMilliVolt);
     writeButtonStateToDisplayBuffer(blinkOn);
@@ -192,12 +176,11 @@ void loop (){
   }
 
 
-  if((currentState == NORMAL)
-  && !vibrate){
-    //Only sleep if no alarm is set. If in other modes like setting, give max performance. 
-     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
-
-  }
+//  if(currentState == NORMAL){
+//    //Only sleep if not doing anything else
+//     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+//
+//  }
 
 
 }
@@ -253,21 +236,20 @@ void processLeftButtonPressed(){
     break;
   case SETTING_TIME:
     {
-      DateTime now = RTC.now();
-      DateTime newTime;
       switch(settingTimeProcess){
       case T_HOUR:
-        newTime = DateTime(now.year(), now.month(), now.day(), getNextHourFromCurrentHour(now.hour(), false), now.minute(), now.second());
+        setTime(getNextHourFromCurrentHour(hour(), false), minute(), second(), day(), month(), year());
         break;
       case T_MINUTE:
-        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), false), now.second());
+        setTime(hour(), getNextMinSecFromCurrentMinSec(minute(), false), second(), day(), month(), year());
         break;
       default: 
         break;
 
       }
 
-      RTC.adjust(newTime);
+
+      RTC.set(now()); 
     }
     break;
   default: 
@@ -383,21 +365,19 @@ void processRightButtonPressed(){
     break;
   case SETTING_TIME:
     {
-      DateTime now = RTC.now();
-      DateTime newTime;
       switch(settingTimeProcess){
       case T_HOUR:
-        newTime = DateTime(now.year(), now.month(), now.day(), getNextHourFromCurrentHour(now.hour(), true), now.minute(), now.second());
+        setTime(getNextHourFromCurrentHour(hour(), true), minute(), second(), day(), month(), year());
         break;
       case T_MINUTE:
-        newTime = DateTime(now.year(), now.month(), now.day(), now.hour(), getNextMinSecFromCurrentMinSec(now.minute(), true), now.second());
+        setTime(hour(), getNextMinSecFromCurrentMinSec(minute(), true), second(), day(), month(), year());
         break;
       default: 
         break;
 
       }
 
-      RTC.adjust(newTime);
+      RTC.set(now()); 
     }
 
 
@@ -490,11 +470,11 @@ void changeMotorState(boolean active, bool direction){
 
 }
 
-void writeTimeToDisplayBuffer(DateTime now, boolean blinkOn, boolean secondsBlinkOn){
+void writeTimeToDisplayBuffer(boolean blinkOn, boolean secondsBlinkOn){
   uView.setCursor(0,0);
   uView.setFontType(7);
 
-  String timeString = generateTimeString(now.hour(), now.minute(), blinkOn, secondsBlinkOn);
+  String timeString = generateTimeString(hour(), minute(), blinkOn, secondsBlinkOn);
   uView.println(timeString);
 }
 
