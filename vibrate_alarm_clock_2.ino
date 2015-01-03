@@ -4,6 +4,8 @@
 #include <RTClib.h>
 #include <RTC_DS1307.h>
 
+#include "LowPower.h"
+
 
 #define LEFT_BUTTON_PIN A3
 #define MIDDLE_BUTTON_PIN A2
@@ -120,15 +122,15 @@ void setup() {
   timeLastPressedLeftButton = 0;
   timeLastPressedMiddleButton = 0;
   timeLastPressedRightButton = 0;
-  
+
   uView.clear(PAGE); 
   uView.setFontType(0);
-  
+
   uView.println(INITIAL_TEXT); 
-  
+
   uView.display();
-  
-  
+
+
   delay(INITIAL_TEXT_DELAY);
 
 
@@ -190,7 +192,12 @@ void loop (){
   }
 
 
-  delay(30);
+  if((currentState == NORMAL)
+    && !vibrate){
+    //Only sleep if no alarm is set. If in other modes like setting, give max performance. 
+    LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+
+  }
 
 
 }
@@ -239,7 +246,7 @@ void processLeftButtonPressed(){
         alarmMinute = getNextMinSecFromCurrentMinSec(alarmMinute, false);
       } 
       else if(settingAlarmProcess == A_TYPE){
-          vibrate = !vibrate;
+        vibrate = !vibrate;
       }
 
     }
@@ -370,7 +377,7 @@ void processRightButtonPressed(){
         alarmMinute = getNextMinSecFromCurrentMinSec(alarmMinute, true);
       } 
       else if(settingAlarmProcess == A_TYPE){
-          vibrate = !vibrate;
+        vibrate = !vibrate;
       }
     }
     break;
@@ -405,15 +412,15 @@ void processRightButtonPressed(){
 
 void checkAndSoundAlarm(int hour, int minute){
   unsigned long currentMillis = millis();
- 
-  
+
+
   if(hour == alarmHour && minute == alarmMinute && currentState == NORMAL
-  && ((currentMillis - alarmLastStarted) > MIN_TIME_BETWEEN_ALARM_STARTS)
-  && (vibrate)){
+    && ((currentMillis - alarmLastStarted) > MIN_TIME_BETWEEN_ALARM_STARTS)
+    && (vibrate)){
     currentState = ALARM;
     alarmLastStarted = currentMillis;
     motorDriverState(true);
-     
+
   }
 
 }
@@ -421,22 +428,23 @@ void checkAndSoundAlarm(int hour, int minute){
 
 void soundAlarmAtThisPointIfNeeded(){
   if(currentState == ALARM){
-    
+
     unsigned long currentMillis = millis();
     if((currentMillis - lastVibration) > MIN_TIME_BETWEEN_MOTOR_STATES){
       lastVibration = currentMillis;
-      
+
       if(lastMotorState){
         lastMotorState = false;
         changeMotorState(false, false);
-      } else {
+      } 
+      else {
         lastMotorState = true;
         changeMotorState(true, true);
       }
 
 
     }
-    
+
 
   }
 
@@ -452,30 +460,32 @@ void stopAlarm(){
 }
 
 void motorDriverState(boolean state){
-  
+
   if(state){
     digitalWrite(MOTOR_SLEEP_PIN, HIGH);
-  } else {
+  } 
+  else {
     digitalWrite(MOTOR_SLEEP_PIN, LOW);
   }
 }
 
 void changeMotorState(boolean active, bool direction){
-  
+
   if(!active){
-     digitalWrite(MOTOR_PIN1, LOW);
-     digitalWrite(MOTOR_PIN2, LOW);
-     return; 
+    digitalWrite(MOTOR_PIN1, LOW);
+    digitalWrite(MOTOR_PIN2, LOW);
+    return; 
   }
-  
-   if(direction){
-     digitalWrite(MOTOR_PIN1, HIGH);
-     digitalWrite(MOTOR_PIN2, LOW);     
-   } else {
-     digitalWrite(MOTOR_PIN1, LOW);
-     digitalWrite(MOTOR_PIN2, HIGH); 
-   }
-    
+
+  if(direction){
+    digitalWrite(MOTOR_PIN1, HIGH);
+    digitalWrite(MOTOR_PIN2, LOW);     
+  } 
+  else {
+    digitalWrite(MOTOR_PIN1, LOW);
+    digitalWrite(MOTOR_PIN2, HIGH); 
+  }
+
 
 
 }
@@ -563,7 +573,8 @@ void writeAlarmToDisplayBuffer(boolean blinkOn){
   else {
     if(vibrate){
       alarmSetting = " On"; 
-    }else {
+    }
+    else {
       alarmSetting = " Off";
     }
   }
@@ -593,25 +604,25 @@ int getNewAverageReadingFromCurrentReading(int array[], int * index, long * tota
 void writeVoltageToDisplayBuffer(int batteryMilliVolt){
   uView.setFontType(0);
   uView.setCursor(0,32);
-  
+
   batteryMilliVolt = getNewAverageReadingFromCurrentReading(milliVoltReadings, &milliVoltIndex, &milliVoltTotal, numReadings, batteryMilliVolt);
   float voltage = (float) batteryMilliVolt / 1000;
 
-//  char buff[6];
-//  String voltageString = dtostrf(voltage, 4, 2, buff);
-//
-//  uView.print(voltageString);
-//  uView.print("V");
+  //  char buff[6];
+  //  String voltageString = dtostrf(voltage, 4, 2, buff);
+  //
+  //  uView.print(voltageString);
+  //  uView.print("V");
 
   int batteryRange = MAX_BATTERY_MILLIVOLT - MIN_BATTERY_MILLIVOLT;
 
   //Cast to long as Arduino int is only 16 bits wide. Not enough to hold this result
   long numerator =  ((long) ((batteryMilliVolt - MIN_BATTERY_MILLIVOLT))) * 100;
   int batteryPercent = numerator / batteryRange;
-  
-  
+
+
   batteryPercent = getNewAverageReadingFromCurrentReading(percentReadings, &percentIndex, &percentTotal, numReadings, batteryPercent);
-  
+
 
   if(batteryPercent < 100){
     uView.setCursor(47,32);
@@ -723,6 +734,7 @@ int getNextMinSecFromCurrentMinSec(int current, boolean increment){
   //To produce positive modulo result
   return (newValue % 60 + 60) % 60;
 }
+
 
 
 
