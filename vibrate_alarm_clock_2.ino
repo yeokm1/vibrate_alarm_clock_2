@@ -193,9 +193,9 @@ void loop (){
 
 
   if((currentState == NORMAL)
-    && !vibrate){
+  && !vibrate){
     //Only sleep if no alarm is set. If in other modes like setting, give max performance. 
-    LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
 
   }
 
@@ -734,6 +734,7 @@ int getNextMinSecFromCurrentMinSec(int current, boolean increment){
   //To produce positive modulo result
   return (newValue % 60 + 60) % 60;
 }
+
 
 
 
