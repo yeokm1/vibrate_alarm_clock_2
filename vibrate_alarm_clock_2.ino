@@ -74,6 +74,19 @@ boolean showLCD = true;
 unsigned long lastVibration;
 boolean lastMotorState = false;
 
+
+const int numReadings = 40;
+
+int percentReadings[numReadings];
+int percentIndex = 0;    
+long percentTotal = 0; 
+
+int milliVoltReadings[numReadings];
+int milliVoltIndex = 0;     
+long milliVoltTotal = 0;     
+
+
+
 void setup() {
 
   Wire.begin();
@@ -154,6 +167,8 @@ void loop (){
     long vccVoltage = getVcc();
     //Serial.println(vccVoltage);
     int batteryMilliVolt = ((long) voltageADCReading * vccVoltage) / ADC_PRECISION;
+
+
 
     writeTimeToDisplayBuffer(now, blinkOn, secondsBlink);
     writeAlarmToDisplayBuffer(blinkOn);
@@ -549,24 +564,43 @@ void writeAlarmToDisplayBuffer(boolean blinkOn){
 }
 
 
+int getNewAverageReadingFromCurrentReading(int array[], int * index, long * total, int numReadings, int newReading){
+  *total = *total - array[*index];
+  array[*index] = newReading; 
+  *total = *total + array[*index];    
+
+  *index = *index + 1;                    
+
+
+  if (*index >= numReadings) {
+    *index = 0;                           
+  }
+  int average =  *total / numReadings;  
+  return average;
+}
+
 void writeVoltageToDisplayBuffer(int batteryMilliVolt){
   uView.setFontType(0);
   uView.setCursor(0,32);
-
-
+  
+  batteryMilliVolt = getNewAverageReadingFromCurrentReading(milliVoltReadings, &milliVoltIndex, &milliVoltTotal, numReadings, batteryMilliVolt);
   float voltage = (float) batteryMilliVolt / 1000;
 
-  char buff[6];
-  String voltageString = dtostrf(voltage, 4, 2, buff);
-
-  uView.print(voltageString);
-  uView.print("V");
+//  char buff[6];
+//  String voltageString = dtostrf(voltage, 4, 2, buff);
+//
+//  uView.print(voltageString);
+//  uView.print("V");
 
   int batteryRange = MAX_BATTERY_MILLIVOLT - MIN_BATTERY_MILLIVOLT;
 
   //Cast to long as Arduino int is only 16 bits wide. Not enough to hold this result
   long numerator =  ((long) ((batteryMilliVolt - MIN_BATTERY_MILLIVOLT))) * 100;
   int batteryPercent = numerator / batteryRange;
+  
+  
+  batteryPercent = getNewAverageReadingFromCurrentReading(percentReadings, &percentIndex, &percentTotal, numReadings, batteryPercent);
+  
 
   if(batteryPercent < 100){
     uView.setCursor(47,32);
