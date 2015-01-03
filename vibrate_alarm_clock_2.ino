@@ -46,9 +46,6 @@ typedef enum {
 SETTING_ALARM_STATE ;
 SETTING_ALARM_STATE settingAlarmProcess;
 
-
-boolean alarmVibrate = false;
-
 int alarmHour = 07;
 int alarmMinute = 00;
 
@@ -395,6 +392,7 @@ void processRightButtonPressed(){
 
 void checkAndSoundAlarm(int hour, int minute){
   unsigned long currentMillis = millis();
+ 
   
   if(hour == alarmHour && minute == alarmMinute && currentState == NORMAL
   && ((currentMillis - alarmLastStarted) > MIN_TIME_BETWEEN_ALARM_STARTS)
@@ -412,8 +410,7 @@ void soundAlarmAtThisPointIfNeeded(){
   if(currentState == ALARM){
     
     unsigned long currentMillis = millis();
-
-    if(alarmVibrate && ((currentMillis - lastVibration) > MIN_TIME_BETWEEN_MOTOR_STATES)){
+    if((currentMillis - lastVibration) > MIN_TIME_BETWEEN_MOTOR_STATES){
       lastVibration = currentMillis;
       
       if(lastMotorState){
@@ -442,6 +439,7 @@ void stopAlarm(){
 }
 
 void motorDriverState(boolean state){
+  
   if(state){
     digitalWrite(MOTOR_SLEEP_PIN, HIGH);
   } else {
@@ -450,7 +448,7 @@ void motorDriverState(boolean state){
 }
 
 void changeMotorState(boolean active, bool direction){
-
+  
   if(!active){
      digitalWrite(MOTOR_PIN1, LOW);
      digitalWrite(MOTOR_PIN2, LOW);
