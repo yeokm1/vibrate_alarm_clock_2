@@ -31,6 +31,9 @@
 #define MIN_TIME_BETWEEN_ALARM_STARTS 60000 //60 seconds
 #define MIN_TIME_BETWEEN_MOTOR_STATES 500
 
+#define INITIAL_TEXT "Happy 25thBirthday\nKai Yao!\n\nBy: YKM\n12/01/2015"
+#define INITIAL_TEXT_DELAY 5000
+
 typedef enum {
   NORMAL, ALARM, SETTING_TIME, SETTING_ALARM} 
 CLOCK_STATE ;
@@ -117,6 +120,16 @@ void setup() {
   timeLastPressedLeftButton = 0;
   timeLastPressedMiddleButton = 0;
   timeLastPressedRightButton = 0;
+  
+  uView.clear(PAGE); 
+  uView.setFontType(0);
+  
+  uView.println(INITIAL_TEXT); 
+  
+  uView.display();
+  
+  
+  delay(INITIAL_TEXT_DELAY);
 
 
 }
