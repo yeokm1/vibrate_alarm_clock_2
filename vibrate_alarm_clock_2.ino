@@ -26,7 +26,7 @@
 #define MIN_BATTERY_MILLIVOLT 3200 //You may need to calibrate this
 #define MAX_BATTERY_MILLIVOLT 4200 //You may need to calibrate this
 
-#define MIN_TIME_BETWEEN_BUTTON_PRESSES 100  //Debouncing purposes
+#define MIN_TIME_BETWEEN_BUTTON_PRESSES 150  //Debouncing purposes
 
 #define MAX_ALARM_LENGTH 600000 //Alarm rings for 10 minutes max
 
