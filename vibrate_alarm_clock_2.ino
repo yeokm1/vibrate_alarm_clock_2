@@ -137,7 +137,9 @@ void setup() {
 
 void loop (){
   
-  setSyncProvider(RTC.get);
+  if(showLCD){
+    setSyncProvider(RTC.get);
+  }
 
   int leftButtonState = digitalRead(LEFT_BUTTON_PIN);
   int middleButtonState = digitalRead(MIDDLE_BUTTON_PIN);
