@@ -137,9 +137,6 @@ void setup() {
 
 void loop (){
   
-  if(showLCD){
-    setSyncProvider(RTC.get);
-  }
 
   int leftButtonState = digitalRead(LEFT_BUTTON_PIN);
   int middleButtonState = digitalRead(MIDDLE_BUTTON_PIN);
@@ -166,6 +163,7 @@ void loop (){
   }
 
   if(showLCD || currentState == ALARM){
+    setSyncProvider(RTC.get);
 
     uView.clear(PAGE);
 
@@ -312,6 +310,7 @@ void processMiddleButtonPressed(){
       } 
       else {
         if(vibrate){
+            RTC.alarm(ALARM_2); //Reset existing alarm
             RTC.setAlarm(ALM2_MATCH_HOURS, alarmMinute, alarmHour, 0);
             RTC.alarmInterrupt(ALARM_2, true);
         } else{
