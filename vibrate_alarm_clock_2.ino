@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <MicroView.h>
-#include <DS3232RTC.h>    //http://github.com/JChristensen/DS3232RTC
-#include <Time.h>         //http://www.arduino.cc/playground/Code/Time  
+#include <DS3232RTC.h>
+#include <Time.h>
 
 #include "LowPower.h"
 
@@ -15,6 +15,8 @@
 #define MOTOR_PIN1 5
 #define MOTOR_PIN2 3
 #define MOTOR_SLEEP_PIN 6
+
+#define ALARM_PIN INT0 //Driven LOW by Chronodot on alarm triggered
 
 #define ADC_PRECISION 1024
 
@@ -38,7 +40,7 @@
 typedef enum {
   NORMAL, ALARM, SETTING_TIME, SETTING_ALARM} 
 CLOCK_STATE ;
-CLOCK_STATE currentState = NORMAL;
+volatile CLOCK_STATE currentState = NORMAL;
 
 typedef enum {
   T_HOUR, T_MINUTE} 
@@ -90,6 +92,13 @@ void setup() {
   Serial.begin(9600);
 
   setSyncProvider(RTC.get);
+  
+    //Clear prior alarm settings on reload
+  RTC.squareWave(SQWAVE_NONE);
+  RTC.alarmInterrupt(ALARM_1, false);  
+  RTC.alarmInterrupt(ALARM_2, false);
+  
+  
 
   uView.begin();      // begin of MicroView
   uView.clear(ALL);   // erase hardware memory inside the OLED controller
@@ -118,11 +127,17 @@ void setup() {
 
 
   delay(INITIAL_TEXT_DELAY);
+  
+  attachInterrupt(ALARM_PIN, alarmTriggered, FALLING);
+
+
 
 
 }
 
 void loop (){
+  
+  setSyncProvider(RTC.get);
 
   int leftButtonState = digitalRead(LEFT_BUTTON_PIN);
   int middleButtonState = digitalRead(MIDDLE_BUTTON_PIN);
@@ -141,9 +156,6 @@ void loop (){
     processRightButtonPressed();
   }
 
-
-
-  checkAndSoundAlarm(hour(), minute());
   soundAlarmAtThisPointIfNeeded();
 
   //Disable alarm if it has gone longer than maximum
@@ -176,11 +188,11 @@ void loop (){
   }
 
 
-//  if(currentState == NORMAL){
-//    //Only sleep if not doing anything else
-//     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
-//
-//  }
+  if(currentState == NORMAL){
+    //Only sleep if not doing anything else
+     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+
+  }
 
 
 }
@@ -297,6 +309,12 @@ void processMiddleButtonPressed(){
         settingAlarmProcess = A_TYPE;
       } 
       else {
+        if(vibrate){
+            RTC.setAlarm(ALM2_MATCH_HOURS, alarmMinute, alarmHour, 0);
+            RTC.alarmInterrupt(ALARM_2, true);
+        } else{
+            RTC.alarmInterrupt(ALARM_2, false);
+        }
         currentState = NORMAL;
       }
 
@@ -361,6 +379,7 @@ void processRightButtonPressed(){
       else if(settingAlarmProcess == A_TYPE){
         vibrate = !vibrate;
       }
+      
     }
     break;
   case SETTING_TIME:
@@ -389,20 +408,12 @@ void processRightButtonPressed(){
 }
 
 
-
-void checkAndSoundAlarm(int hour, int minute){
-  unsigned long currentMillis = millis();
-
-
-  if(hour == alarmHour && minute == alarmMinute && currentState == NORMAL
-    && ((currentMillis - alarmLastStarted) > MIN_TIME_BETWEEN_ALARM_STARTS)
-    && (vibrate)){
+void alarmTriggered(){
+  
+  if(currentState == NORMAL && currentState != ALARM){
     currentState = ALARM;
-    alarmLastStarted = currentMillis;
     motorDriverState(true);
-
   }
-
 }
 
 
@@ -434,6 +445,7 @@ void soundAlarmAtThisPointIfNeeded(){
 
 
 void stopAlarm(){
+  RTC.alarm(ALARM_2);
   currentState = NORMAL;
   motorDriverState(false); 
   turnOffLCDIfCommandIsOff();
