@@ -411,6 +411,7 @@ void processRightButtonPressed(){
 void alarmTriggered(){
   
   if(currentState == NORMAL && currentState != ALARM){
+    alarmLastStarted = millis();
     currentState = ALARM;
     motorDriverState(true);
   }
