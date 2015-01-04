@@ -16,7 +16,9 @@
 #define MOTOR_PIN2 3
 #define MOTOR_SLEEP_PIN 6
 
-#define ALARM_PIN INT0 //Driven LOW by Chronodot on alarm triggered
+//These two rofero to the same pin
+#define ALARM_INT_PIN INT0//Driven LOW by Chronodot on alarm triggered
+#define ALARM_NORM_PIN 2//Driven LOW by Chronodot on alarm triggered
 
 #define ADC_PRECISION 1024
 
@@ -108,6 +110,8 @@ void setup() {
   pinMode(RIGHT_BUTTON_PIN, INPUT_PULLUP);
 
   pinMode(VOLTAGE_MEASURE_PIN, INPUT);
+  
+  pinMode(ALARM_NORM_PIN, INPUT_PULLUP);
 
 
   pinMode(MOTOR_PIN1, OUTPUT); 
@@ -128,7 +132,7 @@ void setup() {
 
   delay(INITIAL_TEXT_DELAY);
   
-  attachInterrupt(ALARM_PIN, alarmTriggered, FALLING);
+  attachInterrupt(ALARM_INT_PIN, alarmTriggered, FALLING);
 
 
 
@@ -211,7 +215,7 @@ void turnOffLCDIfCommandIsOff(){
 
 void processLeftButtonPressed(){
   unsigned long currentMillis = millis();
-
+  
   if((currentMillis - timeLastPressedLeftButton) < MIN_TIME_BETWEEN_BUTTON_PRESSES){
     return;
   }
@@ -273,7 +277,6 @@ void processLeftButtonPressed(){
 
 void processMiddleButtonPressed(){
   unsigned long currentMillis = millis();
-
 
   if((currentMillis - timeLastPressedMiddleButton) < MIN_TIME_BETWEEN_BUTTON_PRESSES){
     return;
