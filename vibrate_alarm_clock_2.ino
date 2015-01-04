@@ -119,6 +119,8 @@ void setup() {
   pinMode(MOTOR_PIN1, OUTPUT); 
   pinMode(MOTOR_PIN2, OUTPUT);
   pinMode(MOTOR_SLEEP_PIN, OUTPUT);
+  
+  motorDriverState(false);
 
   timeLastPressedLeftButton = 0;
   timeLastPressedMiddleButton = 0;
