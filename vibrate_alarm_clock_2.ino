@@ -5,7 +5,6 @@
 
 #include "LowPower.h"
 
-
 #define LEFT_BUTTON_PIN A3
 #define MIDDLE_BUTTON_PIN A2
 #define RIGHT_BUTTON_PIN A1
@@ -180,11 +179,16 @@ void loop (){
     //Serial.println(vccVoltage);
     int batteryMilliVolt = ((long) voltageADCReading * vccVoltage) / ADC_PRECISION;
 
+    float celsius = RTC.temperature() / 4.0;
 
 
     writeTimeToDisplayBuffer(blinkOn, secondsBlink);
     writeAlarmToDisplayBuffer(blinkOn);
-    writeVoltageToDisplayBuffer(batteryMilliVolt);
+    
+    
+    
+    
+    writeVoltageAndTempToDisplayBuffer(batteryMilliVolt, celsius);
     writeButtonStateToDisplayBuffer(blinkOn);
 
 
@@ -598,18 +602,18 @@ int getNewAverageReadingFromCurrentReading(int array[], int * index, long * tota
   return average;
 }
 
-void writeVoltageToDisplayBuffer(int batteryMilliVolt){
+void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature){
   uView.setFontType(0);
   uView.setCursor(0,32);
 
   batteryMilliVolt = getNewAverageReadingFromCurrentReading(milliVoltReadings, &milliVoltIndex, &milliVoltTotal, numReadings, batteryMilliVolt);
   float voltage = (float) batteryMilliVolt / 1000;
 
-  //  char buff[6];
-  //  String voltageString = dtostrf(voltage, 4, 2, buff);
-  //
-  //  uView.print(voltageString);
-  //  uView.print("V");
+  char buff[6];
+  String tempString = dtostrf(temperature, 4, 1, buff);
+  
+  uView.print(tempString);
+  uView.print("C");
 
   int batteryRange = MAX_BATTERY_MILLIVOLT - MIN_BATTERY_MILLIVOLT;
 
