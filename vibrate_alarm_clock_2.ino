@@ -11,8 +11,8 @@
 
 #define VOLTAGE_MEASURE_PIN A0
 
-#define MOTOR_PIN1 5
-#define MOTOR_PIN2 3
+#define MOTOR_PIN1 1
+#define MOTOR_PIN2 0
 #define MOTOR_SLEEP_PIN 6
 
 //These two rofero to the same pin
@@ -90,7 +90,7 @@ long milliVoltTotal = 0;
 void setup() {
 
   Wire.begin();
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   setSyncProvider(RTC.get);
 
@@ -227,7 +227,7 @@ void processLeftButtonPressed(){
 
   timeLastPressedLeftButton = currentMillis;
 
-  Serial.println("Left Button Pressed");
+  //Serial.println("Left Button Pressed");
 
   switch(currentState)
   {
@@ -289,7 +289,7 @@ void processMiddleButtonPressed(){
 
   timeLastPressedMiddleButton = currentMillis;
 
-  Serial.println("Middle Button Pressed");
+  //Serial.println("Middle Button Pressed");
 
   switch(currentState)
   {
@@ -358,7 +358,7 @@ void processRightButtonPressed(){
 
   timeLastPressedRightButton = currentMillis;
 
-  Serial.println("Right Button Pressed");
+  //Serial.println("Right Button Pressed");
 
 
   switch(currentState)
