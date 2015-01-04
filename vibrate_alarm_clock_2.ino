@@ -93,13 +93,13 @@ void setup() {
   Serial.begin(9600);
 
   setSyncProvider(RTC.get);
-  
-    //Clear prior alarm settings on reload
+
+  //Clear prior alarm settings on reload
   RTC.squareWave(SQWAVE_NONE);
   RTC.alarmInterrupt(ALARM_1, false);  
   RTC.alarmInterrupt(ALARM_2, false);
-  
-  
+
+
 
   uView.begin();      // begin of MicroView
   uView.clear(ALL);   // erase hardware memory inside the OLED controller
@@ -110,7 +110,7 @@ void setup() {
   pinMode(RIGHT_BUTTON_PIN, INPUT_PULLUP);
 
   pinMode(VOLTAGE_MEASURE_PIN, INPUT);
-  
+
   pinMode(ALARM_NORM_PIN, INPUT_PULLUP);
 
 
@@ -131,7 +131,7 @@ void setup() {
 
 
   delay(INITIAL_TEXT_DELAY);
-  
+
   attachInterrupt(ALARM_INT_PIN, alarmTriggered, FALLING);
 
 
@@ -140,7 +140,7 @@ void setup() {
 }
 
 void loop (){
-  
+
 
   int leftButtonState = digitalRead(LEFT_BUTTON_PIN);
   int middleButtonState = digitalRead(MIDDLE_BUTTON_PIN);
@@ -185,10 +185,10 @@ void loop (){
 
     writeTimeToDisplayBuffer(blinkOn, secondsBlink);
     writeAlarmToDisplayBuffer(blinkOn);
-    
-    
-    
-    
+
+
+
+
     writeVoltageAndTempToDisplayBuffer(batteryMilliVolt, celsius);
     writeButtonStateToDisplayBuffer(blinkOn);
 
@@ -199,7 +199,7 @@ void loop (){
 
   if(currentState == NORMAL){
     //Only sleep if not doing anything else
-     LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+    LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
 
   }
 
@@ -220,7 +220,7 @@ void turnOffLCDIfCommandIsOff(){
 
 void processLeftButtonPressed(){
   unsigned long currentMillis = millis();
-  
+
   if((currentMillis - timeLastPressedLeftButton) < MIN_TIME_BETWEEN_BUTTON_PRESSES){
     return;
   }
@@ -318,11 +318,12 @@ void processMiddleButtonPressed(){
       } 
       else {
         if(vibrate){
-            RTC.alarm(ALARM_2); //Reset existing alarm
-            RTC.setAlarm(ALM2_MATCH_HOURS, alarmMinute, alarmHour, 0);
-            RTC.alarmInterrupt(ALARM_2, true);
-        } else{
-            RTC.alarmInterrupt(ALARM_2, false);
+          RTC.alarm(ALARM_2); //Reset existing alarm
+          RTC.setAlarm(ALM2_MATCH_HOURS, alarmMinute, alarmHour, 0);
+          RTC.alarmInterrupt(ALARM_2, true);
+        } 
+        else{
+          RTC.alarmInterrupt(ALARM_2, false);
         }
         currentState = NORMAL;
       }
@@ -388,7 +389,7 @@ void processRightButtonPressed(){
       else if(settingAlarmProcess == A_TYPE){
         vibrate = !vibrate;
       }
-      
+
     }
     break;
   case SETTING_TIME:
@@ -418,7 +419,7 @@ void processRightButtonPressed(){
 
 
 void alarmTriggered(){
-  
+
   if(currentState == NORMAL && currentState != ALARM){
     alarmLastStarted = millis();
     currentState = ALARM;
@@ -612,7 +613,7 @@ void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature)
 
   char buff[6];
   String tempString = dtostrf(temperature, 4, 1, buff);
-  
+
   uView.print(tempString);
   uView.print("C");
 
@@ -625,13 +626,13 @@ void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature)
 
   batteryPercent = getNewAverageReadingFromCurrentReading(percentReadings, &percentIndex, &percentTotal, numReadings, batteryPercent);
 
-
-  if(batteryPercent < 100){
-    uView.setCursor(47,32);
+  if(batteryPercent < 0 || batteryPercent >= 100){
+    uView.setCursor(35,32);
   } 
   else {
-    uView.setCursor(41,32);
+    uView.setCursor(47,32);
   }
+
   uView.print(batteryPercent);
   uView.print("%");
 
@@ -736,6 +737,7 @@ int getNextMinSecFromCurrentMinSec(int current, boolean increment){
   //To produce positive modulo result
   return (newValue % 60 + 60) % 60;
 }
+
 
 
 
