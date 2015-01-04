@@ -38,7 +38,7 @@ Closest components used as Fritzing does not have them.
 2. RTC module as Chronodot
 3. The battery is a cylindrical style 4400mAh one.
 
-##Differences with version 1 (v1)
+##Differences with version 1 (V1)
 1. No more pull-down resistors for the switches. I use the internal pull-up resistors of the Arduino by setting pinmode to INPUT_PULLUP.
 2. Battery capacity: The battery size was an afterthought in V1. The battery size is now more than 4x larger.
 3. Power consumption: Reduced by putting the Arduino to sleep and only waking via alarm interrupts from the Chronodot or button press. Battery life is expected to be about 5-6 days.
