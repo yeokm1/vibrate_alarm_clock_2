@@ -103,6 +103,7 @@ void setup() {
 
   uView.begin();      // begin of MicroView
   uView.clear(ALL);   // erase hardware memory inside the OLED controller
+  uView.contrast(0); //Lowest constrast so not so glaring
 
   pinMode(LEFT_BUTTON_PIN, INPUT_PULLUP);
   pinMode(MIDDLE_BUTTON_PIN, INPUT_PULLUP);
