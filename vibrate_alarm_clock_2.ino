@@ -5,19 +5,21 @@
 
 #include "LowPower.h"
 
-#define LEFT_BUTTON_PIN A3
+#define LEFT_BUTTON_INT_PIN INT1
+#define LEFT_BUTTON_NORM_PIN 3
+
 #define MIDDLE_BUTTON_PIN A2
 #define RIGHT_BUTTON_PIN A1
+
+//These two refer to the same pin
+#define ALARM_INT_PIN INT0//Driven LOW by Chronodot on alarm triggered
+#define ALARM_NORM_PIN 2//Driven LOW by Chronodot on alarm triggered
 
 #define VOLTAGE_MEASURE_PIN A0
 
 #define MOTOR_PIN1 1
 #define MOTOR_PIN2 0
 #define MOTOR_SLEEP_PIN 6
-
-//These two rofero to the same pin
-#define ALARM_INT_PIN INT0//Driven LOW by Chronodot on alarm triggered
-#define ALARM_NORM_PIN 2//Driven LOW by Chronodot on alarm triggered
 
 #define ADC_PRECISION 1024
 
@@ -70,7 +72,7 @@ unsigned long previousBlinkTime;
 boolean previousSecondsBlinkState;
 unsigned long previousSecondsBlinkTime;
 
-boolean showLCD = true;
+volatile boolean showLCD = true;
 unsigned long lastVibration;
 boolean lastMotorState = false;
 
@@ -105,7 +107,7 @@ void setup() {
   uView.clear(ALL);   // erase hardware memory inside the OLED controller
   uView.contrast(0); //Lowest constrast so not so glaring
 
-  pinMode(LEFT_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(LEFT_BUTTON_NORM_PIN, INPUT_PULLUP);
   pinMode(MIDDLE_BUTTON_PIN, INPUT_PULLUP);
   pinMode(RIGHT_BUTTON_PIN, INPUT_PULLUP);
 
@@ -131,18 +133,14 @@ void setup() {
 
 
   delay(INITIAL_TEXT_DELAY);
-
   attachInterrupt(ALARM_INT_PIN, alarmTriggered, FALLING);
-
-
-
-
+  attachInterrupt(LEFT_BUTTON_INT_PIN, leftButtonIntPressed, FALLING); //Left Button is used to wake up from deep sleep
 }
 
 void loop (){
 
 
-  int leftButtonState = digitalRead(LEFT_BUTTON_PIN);
+  int leftButtonState = digitalRead(LEFT_BUTTON_NORM_PIN);
   int middleButtonState = digitalRead(MIDDLE_BUTTON_PIN);
   int rightPinState = digitalRead(RIGHT_BUTTON_PIN);
 
@@ -197,9 +195,12 @@ void loop (){
   }
 
 
-  if(currentState == NORMAL){
-    //Only sleep if not doing anything else
-    LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+  if(currentState == NORMAL){   
+    if(showLCD){
+      LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
+    }else {
+      LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+    }
 
   }
 
@@ -215,6 +216,13 @@ void turnOffLCDIfCommandIsOff(){
   if(!showLCD){
     uView.clear(PAGE);
     uView.display();
+  }
+}
+
+void leftButtonIntPressed(){
+  if(!showLCD && currentState == NORMAL){
+    showLCD = true;
+    timeLastPressedLeftButton = millis();
   }
 }
 
