@@ -23,7 +23,7 @@
 
 #define ADC_PRECISION 1024
 
-#define MIN_BATTERY_MILLIVOLT 3200 //You may need to calibrate this
+#define MIN_BATTERY_MILLIVOLT 2600 //You may need to calibrate this
 #define MAX_BATTERY_MILLIVOLT 4200 //You may need to calibrate this
 
 #define MIN_TIME_BETWEEN_BUTTON_PRESSES 150  //Debouncing purposes
