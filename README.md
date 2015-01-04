@@ -43,6 +43,7 @@ Closest components used as Fritzing does not have them.
 2. Battery capacity: The battery size was an afterthought in V1. The battery size is now more than 4x larger.
 3. Power consumption: Reduced by putting the Arduino to sleep and only waking via alarm interrupts from the Chronodot or button press. Battery life is expected to be about 5-6 days.
 4. The Pololu DRV8833 motor driver is powered behind a 3.3V regulator as 5V is too high for the 10mm vibration motor.
+5. Display the temperature of the Chronodot.
 
 ##Notes
 1. The Analog to Digital Converter (ADC) of the Microview is rather unstable. As the battery voltage is retrieved via the ADC, I had to do a running average to get a stable value to display.
