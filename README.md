@@ -75,6 +75,7 @@ Under the motor driver is where I "hide" the vibrator to prevent it from jumping
 I use the very nifty [adjustable voltage generator](https://learn.adafruit.com/adjustable-breadboard-power-supply-kit) to simulate a battery at different voltage levels to verify the battery percent readings.
 
 ![Screen](misc/back.jpg)
+
 Adding a wireless power receiving capability is just as simple as adding a receiver pad. Why didn't I consider this earlier?
 
 ##References and libraries
