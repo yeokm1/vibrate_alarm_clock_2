@@ -74,6 +74,9 @@ Under the motor driver is where I "hide" the vibrator to prevent it from jumping
 ![Screen](misc/innard-adj-voltage1.jpg)
 I use the very nifty [adjustable voltage generator](https://learn.adafruit.com/adjustable-breadboard-power-supply-kit) to simulate a battery at different voltage levels to verify the battery percent readings.
 
+![Screen](misc/back.jpg)
+Adding a wireless power receiving capability is just as simple as adding a receiver pad. Why didn't I consider this earlier?
+
 ##References and libraries
 1. [Creating fonts for Microview](http://learn.microview.io/font/creating-fonts-for-microview.html)
 2. [DS3232 RTC library](https://github.com/JChristensen/DS3232RTC)
