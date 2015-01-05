@@ -45,6 +45,7 @@ Closest components used as Fritzing does not have them.
 4. The Pololu DRV8833 motor driver is powered behind a 3.3V regulator as 5V is too high for the 10mm vibration motor.
 5. Display the temperature of the Chronodot.
 6. Qi wireless charging. Frequenct plugging in and out of the micro-USB cable may wear-out/damage the connector. Wireless charging is convenient too!
+7. Removed speaker as it is rather soft. Even the vibration motor is louder than the speaker!
 
 ##Notes
 1. The Analog to Digital Converter (ADC) of the Microview is rather unstable. As the battery voltage is retrieved via the ADC, I had to do a running average to get a stable value to display.
