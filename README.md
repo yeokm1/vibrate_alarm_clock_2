@@ -60,7 +60,7 @@ Current while in sleep mode. Hardware folks may say I can do better but I don't 
 Current with screen on and no sleep. Current usage more than doubles.
 
 ![Screen](misc/side-not-charging.jpg)
-Side profile.
+Side profile. Obviously not charging at such distance away.
 
 ![Screen](misc/side-charging.jpg)
 On my Qi wireless charge pad. Notice the orange charge light on the Adafruit PowerBoost charger.
