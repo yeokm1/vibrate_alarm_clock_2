@@ -8,6 +8,9 @@ As you can tell from the name, this is the second version. It has been slightly 
 ![Screen](misc/front-assembled.jpg)
 Front, fully assembled.
 
+![Screen](misc/front-charging.jpg)
+Top cover removed and charging on my Qi wireless charge pad.
+
 ![Screen](misc/side-not-charging.jpg)
 Side view with top open. A Qi wireless charger in the background. Not so messy this time.
 
@@ -63,7 +66,7 @@ Current with screen on and no sleep. Current usage more than doubles.
 Side profile. Obviously not charging at such distance away.
 
 ![Screen](misc/side-charging.jpg)
-On my Qi wireless charge pad. Notice the orange charge light on the Adafruit PowerBoost charger.
+On my Qi wireless charge pad. Blue light on the Qi pad and orange on the PowerBoost charger indicates a successful power transfer process.
 
 ![Screen](misc/innard-vibrator.jpg)
 Under the motor driver is where I "hide" the vibrator to prevent it from jumping out of place as experienced in V1.
