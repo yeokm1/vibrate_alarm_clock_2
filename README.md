@@ -1,7 +1,7 @@
 vibrate_alarm_clock_2
 ===================
 
-An alarm clock with vibration, battery monitoring and wireless charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
+An alarm clock with vibration, battery monitoring and wireless (induction) charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
 
 As you can tell from the name, this is the second version. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
 
@@ -51,12 +51,26 @@ Closest components used as Fritzing does not have them.
 ##Notes
 1. The Analog to Digital Converter (ADC) of the Microview is rather unstable. As the battery voltage is retrieved via the ADC, I had to do a running average to get a stable value to display.
 
+##Pictures during assembly/testing
+![Screen](misc/current-sleep.jpg)
+Current while in sleep mode. Hardware folks may say I can do better but I don't really have time to optimise so much.
+
+![Screen](misc/current-active.jpg)
+Current with screen on and no sleep. Current usage more than doubles.
+
+![Screen](misc/side-not-charging.jpg)
+Side profile.
+
+![Screen](misc/side-charging.jpg)
+On my Qi wireless charge pad. Notice the orange charge light on the Adafruit PowerBoost charger.
+
+![Screen](misc/innard-vibrator.jpg)
+Under the motor driver is where I "hide" the vibrator to prevent it from jumping out of place as experienced in V1.
+
+![Screen](misc/innard-adj-voltage1.jpg)
+I use the very nifty [adjustable voltage generator](https://www.adafruit.com/product/184) to simulate a battery at different voltage levels to verify the battery percent readings.
+
 ##References and libraries
 1. [Creating fonts for Microview](http://learn.microview.io/font/creating-fonts-for-microview.html)
 2. [DS3232 RTC library](https://github.com/JChristensen/DS3232RTC)
 3. [Rocketscream Low Power library](http://www.rocketscream.com/blog/2011/07/04/lightweight-low-power-arduino-library/)
-
-##Pictures during assembly/testing
-
-
-
