@@ -3,7 +3,9 @@ vibrate_alarm_clock_2
 
 An alarm clock with vibration, battery monitoring and wireless (induction) charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
 
-As you can tell from the name, this is the second version. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
+As you can tell from the name, this is the second version. It has been slightly streamlined compared to the
+
+[first](https://github.com/yeokm1/vibrate_alarm_clock).
 
 ![Screen](misc/front-assembled.jpg)
 Front, fully assembled.
@@ -11,7 +13,7 @@ Front, fully assembled.
 ![Screen](misc/side-not-charging.jpg)
 Side view with top open. A Qi wireless charger in the background. Not so messy this time.
 
-More pictures during the assembly/testing phase at the end.
+<b>More pictures during the assembly/testing phase at the end.</b>
 
 ##Parts used
 1. [Microview](https://www.sparkfun.com/products/12923) with 64x48 OLED screen (based on ATmega328P chip). Bought during its Kickstarter [campaign](https://www.kickstarter.com/projects/1516846343/microview-chip-sized-arduino-with-built-in-oled-di).
