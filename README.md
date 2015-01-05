@@ -14,7 +14,7 @@ Side view with top open. A Qi wireless charger in the background. Not so messy t
 More pictures during the assembly/testing phase at the end.
 
 ##Parts used
-1. [Microview](https://www.sparkfun.com/products/12923) with 64x48 OLED screen (based on ATmega328P chip)  
+1. [Microview](https://www.sparkfun.com/products/12923) with 64x48 OLED screen (based on ATmega328P chip). Bought during its Kickstarter [campaign](https://www.kickstarter.com/projects/1516846343/microview-chip-sized-arduino-with-built-in-oled-di).
 2. [Chronodot](http://docs.macetech.com/doku.php/chronodot_v2.0) v2.1 Real Time Clock (based on DS3231 temperature compensated RTC crystal)
 3. [Adafruit PowerBoost 500 Charger](https://learn.adafruit.com/adafruit-powerboost-500-plus-charger/overview)
 4. 3.3V voltage regulator (LD1117V33)
