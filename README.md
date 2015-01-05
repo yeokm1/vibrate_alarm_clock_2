@@ -41,7 +41,7 @@ Closest components used as Fritzing does not have them.
 ##Differences with version 1 (V1)
 1. No more pull-down resistors for the switches. I use the internal pull-up resistors of the Arduino by setting pinmode to INPUT_PULLUP.
 2. Battery capacity: The battery size was an afterthought in V1. The battery size is now more than 4x larger.
-3. Power consumption: Reduced by putting the Arduino to sleep and only waking via alarm interrupts from the Chronodot or button press. Battery life is estimated to be about 5-6 days.
+3. Power consumption: Reduced by putting the Arduino to sleep and only waking via alarm interrupts from the Chronodot or button press. Current use is 34mA with display on and 16mA when in sleep giving battery life at approximately 5 and 11 days respectively. (See pictures below)
 4. The Pololu DRV8833 motor driver is powered behind a 3.3V regulator as 5V is too high for the 10mm vibration motor.
 5. Display the temperature of the Chronodot.
 6. Qi wireless charging. Frequenct plugging in and out of the micro-USB cable may wear-out/damage the connector. Wireless charging is convenient too!
