@@ -5,6 +5,7 @@
 
 #include "LowPower.h"
 
+//These two refer to the same pin
 #define LEFT_BUTTON_INT_PIN INT1
 #define LEFT_BUTTON_NORM_PIN 3
 
