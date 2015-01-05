@@ -1,16 +1,17 @@
 vibrate_alarm_clock_2
 ===================
 
-An alarm clock with vibration, battery monitoring and wireless charging capabilities.  Buttons available to set the alarm, turn off OLED and reset.
-This device is meant for my friend's birthday gift. As you can tell from the name, this is the second one. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
+An alarm clock with vibration, battery monitoring and wireless charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
 
-<a href="/misc/front-assembled.jpg"><img src="/misc/front-assembled.jpg" align="centre" height="480" width="480" ></a>
+As you can tell from the name, this is the second version. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
 
+![Screen](misc/front-assembled.jpg)
 Front, fully assembled.
 
-<a href="/misc/side-not-charging.jpg"><img src="/misc/side-not-charging.jpg" align="centre" height="399" width="480" ></a>
-
+![Screen](misc/side-not-charging.jpg)
 Side view with top open. A Qi wireless charger in the background. Not so messy this time.
+
+More pictures during the assembly/testing phase at the end.
 
 ##Parts used
 1. Microview with 64x48 OLED screen (based on ATmega328P chip)  
@@ -26,7 +27,7 @@ Side view with top open. A Qi wireless charger in the background. Not so messy t
 Others:  
 
 1. 1x half-breadboard 
-2. 4x Mini-breadboard (2x8 points)
+2. 4x mini-breadboard (2x8 points)
 3. Translucent case  
 
 ![Screen](/misc/schematic.png)
@@ -44,7 +45,7 @@ Closest components used as Fritzing does not have them.
 3. Power consumption: Reduced by putting the Arduino to sleep and only waking via alarm interrupts from the Chronodot or button press. Even if alarm is enabled, current use is 34mA with display on and 16mA when in sleep giving battery life at approximately 5 and 11 days respectively. (See pictures below)
 4. The Pololu DRV8833 motor driver is powered behind a 3.3V regulator as 5V is too high for the 10mm vibration motor.
 5. Display the temperature of the Chronodot.
-6. Qi wireless charging. Frequenct plugging in and out of the micro-USB cable may wear-out/damage the connector. Wireless charging is convenient too!
+6. Qi wireless charging. Frequent plugging in and out of the micro-USB cable may wear-out/damage the connector. Wireless charging is convenient too!
 7. Removed speaker as it is rather soft. Even the vibration motor is louder than the speaker!
 
 ##Notes
@@ -54,3 +55,8 @@ Closest components used as Fritzing does not have them.
 1. [Creating fonts for Microview](http://learn.microview.io/font/creating-fonts-for-microview.html)
 2. [DS3232 RTC library](https://github.com/JChristensen/DS3232RTC)
 3. [Rocketscream Low Power library](http://www.rocketscream.com/blog/2011/07/04/lightweight-low-power-arduino-library/)
+
+##Pictures during assembly/testing
+
+
+
