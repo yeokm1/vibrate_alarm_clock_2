@@ -14,12 +14,12 @@ Side view with top open. A Qi wireless charger in the background. Not so messy t
 More pictures during the assembly/testing phase at the end.
 
 ##Parts used
-1. Microview with 64x48 OLED screen (based on ATmega328P chip)  
-2. Chronodot v2.1 Real Time Clock (based on DS3231 temperature compensated RTC crystal)
-3. Adafruit PowerBoost 500 Charger
+1. [Microview](https://www.sparkfun.com/products/12923) with 64x48 OLED screen (based on ATmega328P chip)  
+2. [Chronodot](http://docs.macetech.com/doku.php/chronodot_v2.0) v2.1 Real Time Clock (based on DS3231 temperature compensated RTC crystal)
+3. [Adafruit PowerBoost 500 Charger](https://learn.adafruit.com/adafruit-powerboost-500-plus-charger/overview)
 4. 3.3V voltage regulator (LD1117V33)
 5. 4x button switches (1 switch as reset button)  
-6. Pololu DRV8833 dual motor driver  
+6. [Pololu DRV8833](http://www.pololu.com/product/2130) dual motor driver  
 7. 500mA Qi wireless receiver module
 8. 10mm vibration motor
 9. 4400mAh Lithium battery
@@ -68,7 +68,7 @@ On my Qi wireless charge pad. Notice the orange charge light on the Adafruit Pow
 Under the motor driver is where I "hide" the vibrator to prevent it from jumping out of place as experienced in V1.
 
 ![Screen](misc/innard-adj-voltage1.jpg)
-I use the very nifty [adjustable voltage generator](https://www.adafruit.com/product/184) to simulate a battery at different voltage levels to verify the battery percent readings.
+I use the very nifty [adjustable voltage generator](https://learn.adafruit.com/adjustable-breadboard-power-supply-kit) to simulate a battery at different voltage levels to verify the battery percent readings.
 
 ##References and libraries
 1. [Creating fonts for Microview](http://learn.microview.io/font/creating-fonts-for-microview.html)
