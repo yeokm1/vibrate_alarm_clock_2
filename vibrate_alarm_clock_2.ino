@@ -23,7 +23,7 @@
 
 #define ADC_PRECISION 1024
 
- //You may need to calibrate these values. My values are based on this data sheet http://www.adafruit.com/datasheets/18650%204400mAh.pdf
+//You may need to calibrate these values. My values are based on this data sheet http://www.adafruit.com/datasheets/18650%204400mAh.pdf
 #define MIN_BATTERY_MILLIVOLT 2750
 #define MAX_BATTERY_MILLIVOLT 4200
 
