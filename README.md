@@ -1,7 +1,7 @@
 vibrate_alarm_clock_2
 ===================
 
-An alarm clock with vibration, battery monitoring and wireless (induction) charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
+An alarm clock with vibration, battery monitoring and induction (wireless) charging capabilities.  Buttons available to set the time/alarm, turn off OLED and reset. This device is meant for my friend's birthday gift. 
 
 As you can tell from the name, this is the second version. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
 
