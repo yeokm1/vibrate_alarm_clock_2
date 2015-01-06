@@ -8,6 +8,7 @@ As you can tell from the name, this is the second version. It has been slightly 
 ##Demo video on Youtube
 [![](http://img.youtube.com/vi/bRpM-yt7s9M/0.jpg)](http://www.youtube.com/watch?v=bRpM-yt7s9M)
 
+##Final pictures
 ![Screen](misc/front-assembled.jpg)
 Front, fully assembled.
 
