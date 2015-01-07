@@ -25,8 +25,8 @@
 #define ADC_PRECISION 1024
 
 //You may need to calibrate these values. My values are based on this data sheet http://www.adafruit.com/datasheets/18650%204400mAh.pdf
-#define MIN_BATTERY_MILLIVOLT 2750
-#define MAX_BATTERY_MILLIVOLT 4200
+#define MIN_BATTERY_MILLIVOLT 3100 //Discharge cut-off voltage is 2750 but I set it higher as repeated discharge to this low will reduce battery lifespan
+#define MAX_BATTERY_MILLIVOLT 4200 //Max cell voltage
 
 #define MIN_TIME_BETWEEN_BUTTON_PRESSES 150  //Debouncing purposes
 
