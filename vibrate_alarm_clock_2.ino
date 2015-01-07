@@ -48,7 +48,7 @@ CLOCK_STATE ;
 volatile CLOCK_STATE currentState = NORMAL;
 
 typedef enum {
-  T_HOUR, T_MINUTE} 
+  T_HOUR, T_MINUTE, T_VOLTAGE} 
 SETTING_TIME_STATE ;
 SETTING_TIME_STATE settingTimeProcess;
 
@@ -67,6 +67,7 @@ unsigned long timeLastPressedMiddleButton;
 unsigned long timeLastPressedRightButton;
 
 boolean vibrate = false;
+boolean showVoltage = false;
 
 boolean previousBlinkState;
 unsigned long previousBlinkTime;
@@ -121,7 +122,7 @@ void setup() {
   pinMode(MOTOR_PIN1, OUTPUT); 
   pinMode(MOTOR_PIN2, OUTPUT);
   pinMode(MOTOR_SLEEP_PIN, OUTPUT);
-  
+
   motorDriverState(false);
 
   timeLastPressedLeftButton = 0;
@@ -191,7 +192,7 @@ void loop (){
 
 
 
-    writeVoltageAndTempToDisplayBuffer(batteryMilliVolt, celsius);
+    writeVoltageAndTempToDisplayBuffer(batteryMilliVolt, celsius, blinkOn);
     writeButtonStateToDisplayBuffer(blinkOn);
 
 
@@ -202,7 +203,8 @@ void loop (){
   if(currentState == NORMAL){   
     if(showLCD){
       LowPower.powerDown(SLEEP_15Ms, ADC_OFF, BOD_OFF);
-    }else {
+    }
+    else {
       LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
 
@@ -276,6 +278,9 @@ void processLeftButtonPressed(){
       case T_MINUTE:
         setTime(hour(), getNextMinSecFromCurrentMinSec(minute(), false), second(), day(), month(), year());
         break;
+      case T_VOLTAGE:
+        showVoltage = !showVoltage;
+        break;
       default: 
         break;
 
@@ -347,6 +352,9 @@ void processMiddleButtonPressed(){
       if(settingTimeProcess == T_HOUR){
         settingTimeProcess = T_MINUTE;
       } 
+      else if(settingTimeProcess == T_MINUTE){
+        settingTimeProcess = T_VOLTAGE;
+      }
       else {
         currentState = NORMAL;
       }
@@ -412,6 +420,9 @@ void processRightButtonPressed(){
         break;
       case T_MINUTE:
         setTime(hour(), getNextMinSecFromCurrentMinSec(minute(), true), second(), day(), month(), year());
+        break;
+      case T_VOLTAGE:
+        showVoltage = !showVoltage;
         break;
       default: 
         break;
@@ -616,7 +627,7 @@ int getNewAverageReadingFromCurrentReading(int array[], int * index, long * tota
   return average;
 }
 
-void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature){
+void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature, boolean blinkOn){
   uView.setFontType(0);
   uView.setCursor(0,32);
 
@@ -633,21 +644,33 @@ void writeVoltageAndTempToDisplayBuffer(int batteryMilliVolt, float temperature)
 
   //Cast to long as Arduino int is only 16 bits wide. Not enough to hold this result
   long numerator =  ((long) ((batteryMilliVolt - MIN_BATTERY_MILLIVOLT))) * 100;
-  int batteryPercent = numerator / batteryRange;
+
+  if(currentState != SETTING_TIME || settingTimeProcess != T_VOLTAGE || blinkOn){
+
+    if(showVoltage){
+        uView.setCursor(35,32);
+        float batteryVolt = batteryMilliVolt / 1000.0;
+        uView.print(batteryVolt);
+        uView.print("V");
+    } 
+    else {
+
+      int batteryPercent = numerator / batteryRange;
 
 
-  batteryPercent = getNewAverageReadingFromCurrentReading(percentReadings, &percentIndex, &percentTotal, numReadings, batteryPercent);
+      batteryPercent = getNewAverageReadingFromCurrentReading(percentReadings, &percentIndex, &percentTotal, numReadings, batteryPercent);
 
-  if(batteryPercent < 0 || batteryPercent >= 100){
-    uView.setCursor(35,32);
-  } 
-  else {
-    uView.setCursor(47,32);
+      if(batteryPercent < 0 || batteryPercent >= 100){
+        uView.setCursor(35,32);
+      } 
+      else {
+        uView.setCursor(47,32);
+      }
+
+      uView.print(batteryPercent);
+      uView.print("%");
+    }
   }
-
-  uView.print(batteryPercent);
-  uView.print("%");
-
 }
 
 void writeButtonStateToDisplayBuffer(boolean blinkOn){
@@ -749,6 +772,9 @@ int getNextMinSecFromCurrentMinSec(int current, boolean increment){
   //To produce positive modulo result
   return (newValue % 60 + 60) % 60;
 }
+
+
+
 
 
 
