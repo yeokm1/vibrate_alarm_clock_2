@@ -6,7 +6,7 @@ An alarm clock with vibration, battery monitoring and induction (wireless) charg
 As you can tell from the name, this is the second version. It has been slightly streamlined compared to the [first](https://github.com/yeokm1/vibrate_alarm_clock).
 
 ##Demo video on Youtube
-[![](http://img.youtube.com/vi/bRpM-yt7s9M/0.jpg)](http://www.youtube.com/watch?v=bRpM-yt7s9M)
+[![](http://img.youtube.com/vi/rJnRN-2LL7Q/0.jpg)](http://www.youtube.com/watch?v=rJnRN-2LL7Q)
 
 ##Final pictures
 ![Screen](misc/front-assembled.jpg)
