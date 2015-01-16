@@ -42,6 +42,8 @@
 #define INITIAL_TEXT "Happy 25thBirthday\nKai Yao!\n\nBy: YKM\n12/01/2015"
 #define INITIAL_TEXT_DELAY 5000
 
+#define TIME_BEFORE_STANDBY 10000 //10s
+
 typedef enum {
   NORMAL, ALARM, SETTING_TIME, SETTING_ALARM} 
 CLOCK_STATE ;
@@ -90,7 +92,7 @@ int milliVoltReadings[numReadings];
 int milliVoltIndex = 0;     
 long milliVoltTotal = 0;     
 
-
+long lastScreenActiveTime = 0;
 
 void setup() {
 
@@ -140,6 +142,8 @@ void setup() {
   delay(INITIAL_TEXT_DELAY);
   attachInterrupt(ALARM_INT_PIN, alarmTriggered, FALLING);
   attachInterrupt(LEFT_BUTTON_INT_PIN, leftButtonIntPressed, FALLING); //Left Button is used to wake up from deep sleep
+  
+  lastScreenActiveTime = millis();
 }
 
 void loop (){
@@ -163,10 +167,17 @@ void loop (){
   }
 
   soundAlarmAtThisPointIfNeeded();
+  
+  long currentTime = millis();
 
   //Disable alarm if it has gone longer than maximum
-  if(currentState == ALARM && (millis() - alarmLastStarted) > MAX_ALARM_LENGTH){
+  if(currentState == ALARM && (currentTime - alarmLastStarted) > MAX_ALARM_LENGTH){
     stopAlarm();
+  }
+  
+  if(currentState == NORMAL && showLCD && ((currentTime - lastScreenActiveTime) > TIME_BEFORE_STANDBY)){
+    showLCD = false;
+    turnOffLCDIfCommandIsOff();
   }
 
   if(showLCD || currentState == ALARM){
@@ -228,7 +239,9 @@ void turnOffLCDIfCommandIsOff(){
 void leftButtonIntPressed(){
   if(!showLCD && currentState == NORMAL){
     showLCD = true;
-    timeLastPressedLeftButton = millis();
+    long currentTime = millis();
+    timeLastPressedLeftButton = currentTime;
+    lastScreenActiveTime = currentTime;
   }
 }
 
@@ -238,8 +251,10 @@ void processLeftButtonPressed(){
   if((currentMillis - timeLastPressedLeftButton) < MIN_TIME_BETWEEN_BUTTON_PRESSES){
     return;
   }
+  
 
   timeLastPressedLeftButton = currentMillis;
+  lastScreenActiveTime = currentMillis;
 
   //Serial.println("Left Button Pressed");
 
@@ -305,6 +320,7 @@ void processMiddleButtonPressed(){
   }
 
   timeLastPressedMiddleButton = currentMillis;
+  lastScreenActiveTime = currentMillis;
 
   //Serial.println("Middle Button Pressed");
 
@@ -377,6 +393,7 @@ void processRightButtonPressed(){
   }
 
   timeLastPressedRightButton = currentMillis;
+  lastScreenActiveTime = currentMillis;
 
   //Serial.println("Right Button Pressed");
 
