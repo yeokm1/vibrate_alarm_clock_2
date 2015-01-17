@@ -175,6 +175,7 @@ void loop (){
     stopAlarm();
   }
   
+  //Auto turn off screen after certain time
   if(currentState == NORMAL && showLCD && ((currentTime - lastScreenActiveTime) > TIME_BEFORE_STANDBY)){
     showLCD = false;
     turnOffLCDIfCommandIsOff();
